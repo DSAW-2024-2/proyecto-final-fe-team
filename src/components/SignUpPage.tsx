@@ -55,7 +55,7 @@ return (
 
         </div>
 
-        <div className="hidden w-full lg:w-1/2 lg:flex lg:flex-col lg:items-center px-6 py-16">
+        <div className="w-full lg:w-1/2 flex flex-col items-center px-6 py-16">
             <div className="w-full max-w-sm px-6 py-12">
 
             <div className="text-center">
