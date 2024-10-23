@@ -1,4 +1,6 @@
 import React, {useState, ChangeEvent, FormEvent} from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 interface FormData{
     IdUni: number,
@@ -43,18 +45,21 @@ function SignUpPage() {
         setIsLoading(true);
     };
 
+    // Aqui se necesita hacer la peticion POST al servidor
+
    
 return (
     <div className="flex justify-center">
     <div className="w-full max-w-md px-6 py-12">
         <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2.5 text-blue-600">Crear Cuenta</h2>
-            <p className="text-blue-600 mb-6">Ingresa tus datos para disfrutar de todos nuestros servicios</p>
+            <FontAwesomeIcon icon={faUser} style={{ color: '#152E52' }} className="m-2 text-3xl" />
+            <h2 className="text-2xl font-bold m-4 text-blue">Registrarse</h2>
+            <p className="text-blue m-4">Ingresa tus datos para disfrutar de todos nuestros servicios</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label htmlFor="IdUni" className="block font-medium text-blue-600">ID universitario</label>
+                <label htmlFor="IdUni" className="block font-medium text-blue">ID universitario</label>
                 <input 
                     id="IdUni" 
                     name="IdUni" 
@@ -62,12 +67,12 @@ return (
                     required
                     value={formData.IdUni}
                     onChange={handleChange}
-                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none" 
+                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green focus:outline-none"  
                 />
             </div>
 
             <div>
-                <label htmlFor="email" className="block font-medium text-blue-600">Correo corporativo</label>
+                <label htmlFor="email" className="block font-medium text-blue">Correo corporativo</label>
                 <input 
                     id="email" 
                     name="email" 
@@ -75,12 +80,12 @@ return (
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none" 
+                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green focus:outline-none"  
                 />
             </div>
 
             <div>
-                <label htmlFor="phone" className="block font-medium text-blue-600">Número de contacto</label>
+                <label htmlFor="phone" className="block font-medium text-blue">Número de contacto</label>
                 <input 
                     id="phone" 
                     name="phone" 
@@ -88,12 +93,12 @@ return (
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none" 
+                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green focus:outline-none"  
                 />
             </div>
 
             <div>
-                <label htmlFor="firstName" className="block font-medium text-blue-600">Nombre</label>
+                <label htmlFor="firstName" className="block font-medium text-blue">Nombre</label>
                 <input 
                     id="firstName" 
                     name="firstName" 
@@ -101,12 +106,12 @@ return (
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none" 
+                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green focus:outline-none"  
                 />
             </div>
 
             <div>
-                <label htmlFor="lastName" className="block font-medium text-blue-600">Apellido</label>
+                <label htmlFor="lastName" className="block font-medium text-blue">Apellido</label>
                 <input 
                     id="lastName" 
                     name="lastName" 
@@ -114,13 +119,13 @@ return (
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none" 
+                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green focus:outline-none"  
                 />
             </div>
 
 
             <div>
-                <label htmlFor="password" className="block font-medium text-blue-600">Contraseña</label>
+                <label htmlFor="password" className="block font-medium text-blue">Contraseña</label>
                 <input 
                     id="password" 
                     name="password" 
@@ -128,14 +133,14 @@ return (
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none" 
+                    className="mt-2 w-full rounded-3xl border py-2 px-3 shadow-sm focus:ring-2 focus:ring-green focus:outline-none"  
                 />
             </div>
 
             <button 
                 type="submit"
                 disabled={isLoading}
-                className={`w-full h-11 bg-green-500 text-white rounded-3xl font-semibold shadow-sm hover:bg-blue-600 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full h-11 bg-green text-white rounded-3xl font-semibold shadow-sm hover:bg-blue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
             </button>
@@ -143,7 +148,7 @@ return (
 
         <p className="mt-6 text-center text-gray-500">
             ¿Ya tienes una cuenta?
-            <a href="/signin" className="text-green-500 hover:text-blue-600 ml-1">Inicia sesión aquí</a>
+            <a href="#" className="text-green hover:text-blue ml-1">Inicia sesión aquí</a>
         </p>
     </div>
 </div>
