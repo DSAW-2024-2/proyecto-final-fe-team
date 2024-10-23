@@ -1,14 +1,17 @@
 // import './App.css'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignInPage from './components/SignInPage.tsx';
 import SignUpPage from './components/SignUpPage.tsx';
 
 
 const App: React.FC = () => {
 	return (
-	  <div className="App">
-		<SignUpPage/>
-		<SignInPage/>
-	  </div>
+	  <Router>
+		<Routes>
+		  <Route path="/register" element={<SignUpPage />} />
+		  <Route path="/login" element={<SignInPage />} />
+		</Routes>
+	  </Router>
 	);
   };
 
