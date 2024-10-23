@@ -1,7 +1,13 @@
 // import './App.css'
+import SignInPage from './components/SignInPage.tsx';
 
-function App() {
-	return <h1 className='text-red-600'>Hola mundo</h1>;
-}
+
+const App: React.FC = () => {
+	return (
+	  <div className="App">
+		<SignInPage/>
+	  </div>
+	);
+  };
 
 export default App;
