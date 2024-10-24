@@ -2,8 +2,8 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignInPage from './components/SignInPage.tsx';
 import SignUpPage from './components/SignUpPage.tsx';
-import LoadingFirstPage from './LoadingFirstPage.tsx';
-import StartPage from './StartPage.tsx';
+import LoadingFirstPage from './components/LoadingFirstPage.tsx';
+import StartPage from './components/StartPage.tsx';
 
 
 const App: React.FC = () => {

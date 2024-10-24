@@ -51,7 +51,7 @@ function SignUpPage() {
 return (
     <div className="flex">
 
-        <div className="flex lg:w-1/2 md:justify-center  md:bg-blue">
+        <div className="flex lg:w-1/2 lg:justify-center  lg:bg-blue">
 
         </div>
 
