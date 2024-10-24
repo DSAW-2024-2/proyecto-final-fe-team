@@ -1,6 +1,13 @@
 function StartPage() {
     return (
-        <div className="w-full h-[100vh] flex flex-col justify-center items-center">
+        <div className="flex">
+            
+            <div className="lg:bg-blue lg:w-1/2">
+
+            </div>
+
+
+            <div className="w-full lg:w-1/2 h-[100vh] flex flex-col justify-center items-center">
             <section className="flex flex-col items-center">
                 <h1 className="text-[40px] text-blue tracking-tight"><span className="font-bold text-green">Uni</span>Lift</h1>
                 <h3 className="text-[11px] tracking-[0.5em] font-semibold text-gray-500">YOUR EASY LIFT</h3>
@@ -18,7 +25,7 @@ function StartPage() {
                         <a href="#" className="text-green hover:text-blue ml-1">Regístrate aquí</a>
             </p>
             </section>
-            
+            </div>
         </div>
     );
 }
