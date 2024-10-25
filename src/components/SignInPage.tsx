@@ -59,13 +59,15 @@ const SignInPage: React.FC = () => {
       }
 
       localStorage.setItem('token', data.token);
-      navigate('/dashboard');
+      navigate('/home');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error en el login');
     } finally {
       setIsLoading(false);
     }
+
   };
+
 
   return (
     <div className="h-screen flex">

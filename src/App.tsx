@@ -1,18 +1,38 @@
 // import './App.css'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import SignInPage from './components/SignInPage.tsx';
 import SignUpPage from './components/SignUpPage.tsx';
 import LoadingFirstPage from './components/LoadingFirstPage.tsx';
 import StartPage from './components/StartPage.tsx';
+import HomePage from './components/HomePage.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+import { isTokenValid } from './utils/auth.ts';
 
 
 const App: React.FC = () => {
 	return (
 	  <Router>
 		<Routes>
-		  <Route path="/" element={<StartPage />} />
-		  <Route path="/register" element={<SignUpPage />} />
+		  {/* Rutas públicas */}
+		  <Route path="/start" element={<StartPage />} />
 		  <Route path="/login" element={<SignInPage />} />
+		  <Route path="/register" element={<SignUpPage />} />
+  
+		  {/* Rutas protegidas */}
+		  <Route element={<ProtectedRoute />}>
+			<Route path="/home" element={<HomePage />} />
+			{/* Aquí puedes agregar más rutas protegidas */}
+		  </Route>
+  
+		  {/* Redirigir ruta raíz */}
+		  <Route 
+  			path="/" 
+  			element={
+    		isTokenValid() 
+      		? <Navigate to="/home" replace /> 
+      		: <Navigate to="/login" replace />
+  			} 
+			/>
 		</Routes>
 	  </Router>
 	);
