@@ -2,7 +2,6 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import SignInPage from './components/SignInPage.tsx';
 import SignUpPage from './components/SignUpPage.tsx';
-import LoadingFirstPage from './components/LoadingFirstPage.tsx';
 import StartPage from './components/StartPage.tsx';
 import HomePage from './components/HomePage.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx';
