@@ -1,6 +1,7 @@
 import React, {useState, ChangeEvent, FormEvent} from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";
 
 interface FormData{
     IdUni: string,
@@ -31,6 +32,8 @@ function SignUpPage() {
     const [success, setSuccess] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const navigate = useNavigate();
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -43,6 +46,11 @@ function SignUpPage() {
         e.preventDefault();
         setError('');
         setIsLoading(true);
+    };
+
+    const handleSingIn = (e: React.MouseEvent<HTMLAnchorElement>): void => {
+        e.preventDefault();
+        navigate('/login');
     };
 
     // Aqui se necesita hacer la peticion POST al servidor
@@ -155,7 +163,7 @@ return (
 
             <p className="mt-6 text-center text-gray-500">
                 ¿Ya tienes una cuenta?
-                <a href="#" className="text-green hover:text-blue ml-1">Inicia sesión aquí</a>
+                <a href="" className="text-green hover:text-blue ml-1" onClick={handleSingIn}>Inicia sesión aquí</a>
             </p>
             </div>
         </div>

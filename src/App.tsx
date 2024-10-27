@@ -29,7 +29,7 @@ const App: React.FC = () => {
   			element={
     		isTokenValid() 
       		? <Navigate to="/home" replace /> 
-      		: <Navigate to="/login" replace />
+      		: <Navigate to="/start" replace />
   			} 
 			/>
 		</Routes>

@@ -24,6 +24,7 @@ const SignInPage: React.FC = () => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -150,7 +151,7 @@ const SignInPage: React.FC = () => {
           <p className="mt-6 text-center text-gray-500">
             ¿No tienes una cuenta?
             <a 
-              href="#" 
+              href="" 
               className="text-green hover:text-blue ml-1" 
               onClick={handleSignUp}
             >
