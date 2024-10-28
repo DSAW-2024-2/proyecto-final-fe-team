@@ -27,7 +27,7 @@ function StartPage() {
             </section>
             
             <section className="m-10 flex flex-col justify-center">
-                <h1 className="text-[30px] text-blue my-10 -mx-4 text-center">Te damos la bienvenida a <span className="font-bold">UniLift</span></h1>
+                <h1 className="text-[30px] text-blue my-10  text-center">Te damos la bienvenida a <span className="font-bold">UniLift</span></h1>
                 <button type="submit"
                             className="w-full h-11 bg-green text-white rounded-3xl font-semibold shadow-sm hover:bg-blue mt-10" onClick={handleSignIn}>
                             Iniciar Sesión

@@ -5,6 +5,7 @@ import SignUpPage from './components/SignUpPage.tsx';
 import StartPage from './components/StartPage.tsx';
 import HomePage from './components/HomePage.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx';
+import RolPage from './components/RolPage.tsx';
 import { isTokenValid } from './utils/auth.ts';
 
 
@@ -18,7 +19,9 @@ const App: React.FC = () => {
 		  <Route path="/register" element={<SignUpPage />} />
   
 		  {/* Rutas protegidas */}
+
 		  <Route element={<ProtectedRoute />}>
+		  	<Route path="/rol" element={<RolPage />} />
 			<Route path="/home" element={<HomePage />} />
 			{/* Aquí puedes agregar más rutas protegidas */}
 		  </Route>

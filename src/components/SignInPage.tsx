@@ -54,13 +54,15 @@ const SignInPage: React.FC = () => {
       });
 
       const data = await response.json();
+      console.log('Respuesta del servidor:', data); // Agregamos este log
 
       if (!response.ok) {
         throw new Error(data.message || 'Error al iniciar sesión');
       }
 
       localStorage.setItem('token', data.token);
-      navigate('/home');
+      localStorage.setItem('userName', data.user.name); 
+      navigate('/rol');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error en el login');
     } finally {
@@ -124,7 +126,7 @@ const SignInPage: React.FC = () => {
             <div>
               <label 
                 htmlFor="password" 
-                className="block font-medium text-blue-900"
+                className="block font-medium text-blue"
               >
                 Contraseña
               </label>
