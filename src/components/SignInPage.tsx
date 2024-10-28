@@ -61,6 +61,7 @@ const SignInPage: React.FC = () => {
       }
 
       localStorage.setItem('token', data.token);
+      localStorage.setItem('userName', data.user.name);
       localStorage.setItem('userName', data.user.name); 
       navigate('/rol');
     } catch (err) {
