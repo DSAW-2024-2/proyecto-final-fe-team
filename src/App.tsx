@@ -5,6 +5,7 @@ import SignUpPage from './components/SignUpPage.tsx';
 import StartPage from './components/StartPage.tsx';
 import HomePage from './components/HomePage.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx';
+import PublicRoute from './components/PublicRoute.tsx';
 import RolPage from './components/RolPage.tsx';
 import { isTokenValid } from './utils/auth.ts';
 
@@ -13,17 +14,21 @@ const App: React.FC = () => {
 	return (
 	  <Router>
 		<Routes>
+
 		  {/* Rutas públicas */}
-		  <Route path="/start" element={<StartPage />} />
-		  <Route path="/login" element={<SignInPage />} />
-		  <Route path="/register" element={<SignUpPage />} />
+		  
+		  <Route element={<PublicRoute/>}>
+			<Route path="/start" element={<StartPage />} />
+			<Route path="/login" element={<SignInPage />} />
+			<Route path="/register" element={<SignUpPage />} />
+		  </Route>
   
 		  {/* Rutas protegidas */}
 
 		  <Route element={<ProtectedRoute />}>
 		  	<Route path="/rol" element={<RolPage />} />
 			<Route path="/home" element={<HomePage />} />
-			{/* Aquí puedes agregar más rutas protegidas */}
+			
 		  </Route>
   
 		  {/* Redirigir ruta raíz */}
