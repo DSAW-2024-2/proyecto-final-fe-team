@@ -9,8 +9,12 @@ interface LoginFormData {
 }
 
 interface LoginResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   message: string;
+  user: {
+    name: string;
+  };
 }
 
 const SignInPage: React.FC = () => {
@@ -23,7 +27,6 @@ const SignInPage: React.FC = () => {
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,24 +56,22 @@ const SignInPage: React.FC = () => {
         credentials: 'include'
       });
 
-      const data = await response.json();
-      console.log('Respuesta del servidor:', data); // Agregamos este log
+      const data: LoginResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || 'Error al iniciar sesión');
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userName', data.user.name); 
+      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
+      localStorage.setItem('userName', data.user.name);
       navigate('/rol');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error en el login');
     } finally {
       setIsLoading(false);
     }
-
   };
-
 
   return (
     <div className="h-screen flex">
