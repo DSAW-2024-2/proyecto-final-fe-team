@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import SignInPage from './components/SignInPage.tsx';
 import SignUpPage from './components/SignUpPage.tsx';
@@ -10,7 +9,6 @@ import PublicRoute from './components/PublicRoute.tsx';
 import RolPage from './components/RolPage.tsx';
 import CarRegistrationPage from './components/CarRegistrationPage.tsx'
 import { isTokenValid } from './utils/auth.ts';
-
 
 const App: React.FC = () => {
   return (
@@ -31,25 +29,21 @@ const App: React.FC = () => {
           <Route path="/homeDriver" element={<HomePageDriver />} />
         </Route>
 
-		  <Route element={<ProtectedRoute />}>
-		  	<Route path="/rol" element={<RolPage />} />
-			<Route path="/register-car" element={<CarRegistrationPage/>} />
-			<Route path="/home" element={<HomePage />} />
-			
-		  </Route>
-  
-		  {/* Redirigir ruta raíz */}
-		  <Route 
-  			path="/" 
-  			element={
-    		isTokenValid() 
-      		? <Navigate to="/home" replace /> 
-      		: <Navigate to="/start" replace />
-  			} 
-			/>
-		</Routes>
-	  </Router>
-	);
-  };
+        {/* Ruta por defecto */}
+        <Route 
+          path="/" 
+          element={
+            isTokenValid() 
+              ? <Navigate to="/rol" replace /> 
+              : <Navigate to="/start" replace />
+          } 
+        />
+
+        {/* Ruta para manejar rutas no encontradas */}
+        <Route path="*" element={<Navigate to="/rol" replace />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;

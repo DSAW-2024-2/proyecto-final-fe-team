@@ -1,10 +1,14 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import TravelCard from '../elements/TravelCard.tsx';
 import SmallTravelCard from '../elements/SmallTravelCard.tsx';
 import Header from '../elements/Header.tsx';
 import SmallTravelCardText from '../elements/SmallTravelCardText.tsx';
 
+
 function HomePage() {
+  
+  const userName = localStorage.getItem('userName') || 'Usuario';
+  
   return (
 
 
@@ -13,7 +17,7 @@ function HomePage() {
         type="Pasajero"
       />
       <div className='w-full md:hidden'>
-        <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido Matias,</p>
+        <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
         <p className='text-h2 text-blue font-bold w-full md:pl-20'>Tu proximo viaje: </p>
         <div className="flex w-full h-min md:justify-start">
           <SmallTravelCard
@@ -31,7 +35,7 @@ function HomePage() {
       <div className='md:flex w-full justify-between space-x-4 mx-20 hidden '>
         <div className='flex justify-between w-3/5 bg-green rounded-xl py-6 pr-11'>
           <div className='flex flex-col justify-end mb-4 '>
-            <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido Matias,</p>
+            <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
             <p className='text-h2 text-blue  w-full md:pl-20'>¡Ten un lindo dia!</p>
             
           </div>
