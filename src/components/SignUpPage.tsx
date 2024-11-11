@@ -1,7 +1,9 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import BackgroundAnimation from '../elements/BackgroundAnimation';
 import { useNavigate } from "react-router-dom";
+
 
 interface FormData {
     IdUni: string,
@@ -102,9 +104,21 @@ function SignUpPage() {
         navigate('/login');
     };
    
-    return (
-        <div className="flex">
-            <div className="flex lg:w-1/2 lg:justify-center lg:bg-blue">
+return (
+    <div className="flex">
+
+        <div className="hidden lg:flex w-1/2 bg-blue items-center justify-center relative  ">
+            <BackgroundAnimation/>
+        </div>
+
+        <div className="w-full lg:w-1/2 flex flex-col items-center px-6 py-16">
+            <div className="w-full max-w-sm px-6 py-12">
+
+            <div className="text-center">
+                <FontAwesomeIcon icon={faUser} style={{ color: '#152E52' }} className="m-2 text-3xl" />
+                <h2 className="text-2xl font-bold m-4 text-blue">Registrarse</h2>
+                <p className="text-blue m-4">Ingresa tus datos para disfrutar de todos nuestros servicios</p>
+
             </div>
 
             <div className="w-full lg:w-1/2 flex flex-col items-center px-6 py-16">

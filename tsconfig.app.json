@@ -13,6 +13,8 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "esModuleInterop": true, // Permite usar 'import' con módulos comunes
+
 
     /* Linting */
     "strict": true,

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
+import BackgroundAnimation from '../elements/BackgroundAnimation';
 
 interface LoginFormData {
   email: string;
@@ -26,7 +27,7 @@ const SignInPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_URL = import.meta.env.VITE_API_URL || 'https://proyecto-final-fe-team-qg0gyszj9-gabrielabejarano09s-projects.vercel.app/login';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -73,14 +74,20 @@ const SignInPage: React.FC = () => {
     }
   };
 
+
+       // <img 
+       //   src="/src/assets/Background.jpg" 
+        //  alt="Background with circles" 
+        //  className="h-screen w-screen object-cover"
+        
+        ///>
+
+
+
   return (
     <div className="h-screen flex">
       <div className="hidden lg:flex w-1/2 bg-blue items-center justify-center relative">
-        <img 
-          src="/src/assets/Background.jpg" 
-          alt="Background with circles" 
-          className="h-screen w-screen object-cover"
-        />
+        <BackgroundAnimation/>
       </div>
 
       <div className="w-full lg:w-1/2 flex items-center justify-center">
