@@ -1,6 +1,7 @@
 import React, {useState, ChangeEvent, FormEvent} from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import BackgroundAnimation from '../elements/BackgroundAnimation';
 
 interface FormData{
     IdUni: string,
@@ -51,8 +52,8 @@ function SignUpPage() {
 return (
     <div className="flex">
 
-        <div className="flex lg:w-1/2 lg:justify-center  lg:bg-blue">
-
+        <div className="hidden lg:flex w-1/2 bg-blue items-center justify-center relative  ">
+            <BackgroundAnimation/>
         </div>
 
         <div className="w-full lg:w-1/2 flex flex-col items-center px-6 py-16">
