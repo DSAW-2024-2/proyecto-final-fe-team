@@ -4,14 +4,13 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import BackgroundAnimation from '../elements/BackgroundAnimation';
 import { useNavigate } from "react-router-dom";
 
-
 interface FormData {
-    IdUni: string,
-    email: string,
-    phone: string,
-    firstName: string,
-    lastName: string,
-    password: string,
+    IdUni: string;
+    email: string;
+    phone: string;
+    firstName: string;
+    lastName: string;
+    password: string;
 }
 
 function SignUpPage() {
@@ -38,7 +37,6 @@ function SignUpPage() {
         }));
     };
 
-    // Redirigir al usuario a la página de login si el registro fue exitoso
     useEffect(() => {
         if (success) {
             const timer = setTimeout(() => {
@@ -74,7 +72,7 @@ function SignUpPage() {
             const data = await response.json();
     
             if (!response.ok) {
-                setError(data.message || 'Error al registrar la cuenta')
+                setError(data.message || 'Error al registrar la cuenta');
                 throw new Error(data.message || 'Error en el registro');
             }
     
@@ -104,21 +102,10 @@ function SignUpPage() {
         navigate('/login');
     };
    
-return (
-    <div className="flex">
-
-        <div className="hidden lg:flex w-1/2 bg-blue items-center justify-center relative  ">
-            <BackgroundAnimation/>
-        </div>
-
-        <div className="w-full lg:w-1/2 flex flex-col items-center px-6 py-16">
-            <div className="w-full max-w-sm px-6 py-12">
-
-            <div className="text-center">
-                <FontAwesomeIcon icon={faUser} style={{ color: '#152E52' }} className="m-2 text-3xl" />
-                <h2 className="text-2xl font-bold m-4 text-blue">Registrarse</h2>
-                <p className="text-blue m-4">Ingresa tus datos para disfrutar de todos nuestros servicios</p>
-
+    return (
+        <div className="flex">
+            <div className="hidden lg:flex w-1/2 bg-blue items-center justify-center relative">
+                <BackgroundAnimation/>
             </div>
 
             <div className="w-full lg:w-1/2 flex flex-col items-center px-6 py-16">
@@ -228,8 +215,8 @@ return (
                     </form>
 
                     <p className="mt-6 text-center text-gray-500">
-                        ¿Ya tienes una cuenta?
-                        <a href="" className="text-green hover:text-blue ml-1" onClick={handleSingIn}>
+                        ¿Ya tienes una cuenta?{' '}
+                        <a href="#" className="text-green hover:text-blue ml-1" onClick={handleSingIn}>
                             Inicia sesión aquí
                         </a>
                     </p>
