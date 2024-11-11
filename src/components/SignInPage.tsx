@@ -10,8 +10,12 @@ interface LoginFormData {
 }
 
 interface LoginResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   message: string;
+  user: {
+    name: string;
+  };
 }
 
 const SignInPage: React.FC = () => {
@@ -53,21 +57,23 @@ const SignInPage: React.FC = () => {
         credentials: 'include'
       });
 
-      const data = await response.json();
+      const data: LoginResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || 'Error al iniciar sesión');
       }
 
-      localStorage.setItem('token', data.token);
-      navigate('/home');
+      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
+      localStorage.setItem('userName', data.user.name);
+      navigate('/rol');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error en el login');
     } finally {
       setIsLoading(false);
     }
-
   };
+
 
        // <img 
        //   src="/src/assets/Background.jpg" 
@@ -75,6 +81,7 @@ const SignInPage: React.FC = () => {
         //  className="h-screen w-screen object-cover"
         
         ///>
+
 
 
   return (
@@ -127,7 +134,7 @@ const SignInPage: React.FC = () => {
             <div>
               <label 
                 htmlFor="password" 
-                className="block font-medium text-blue-900"
+                className="block font-medium text-blue"
               >
                 Contraseña
               </label>
@@ -154,7 +161,7 @@ const SignInPage: React.FC = () => {
           <p className="mt-6 text-center text-gray-500">
             ¿No tienes una cuenta?
             <a 
-              href="#" 
+              href="" 
               className="text-green hover:text-blue ml-1" 
               onClick={handleSignUp}
             >

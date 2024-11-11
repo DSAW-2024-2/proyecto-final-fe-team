@@ -7,6 +7,7 @@ import SmallTravelCardText from '../elements/SmallTravelCardText.tsx';
 function HomePage() {
   return (
 
+
     <div className="min-h-screen flex flex-col md:flex-row md:mt-2 items-center flex-wrap gap-4">
       <Header
         type="Pasajero"
@@ -127,7 +128,6 @@ function HomePage() {
         affinity="1/6"
         imageVehicle="https://via.placeholder.com/150"
       />
-
 
     </div>
   );
