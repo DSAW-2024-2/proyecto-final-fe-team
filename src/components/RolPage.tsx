@@ -5,41 +5,17 @@ import { useNavigate } from "react-router-dom";
 function RolPage() {
     const navigate = useNavigate();
 
-    const handleHome = () => {
+    const handleHome = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        localStorage.setItem('userRole', 'passenger');
         navigate('/home');
-    };
+    }
 
-    const handleHomeDriver = async () => {
-        try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-
-            const response = await fetch(`${API_URL}/api/vehicles/my-car`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                credentials: 'include'
-            });
-
-            const data = await response.json().catch(() => null);
-
-            if (response.status === 200 && data && data.data) {
-                navigate('/homeDriver');
-            } else {
-                navigate('/register-car');
-            }
-        } catch (error) {
-            console.error('Error al verificar vehículo:', error);
-            navigate('/register-car');
-        }
-    };
+    const handleHomeDriver = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        localStorage.setItem('userRole', 'driver');
+        navigate('/home-driver');
+    }
 
     const userName = localStorage.getItem('userName') || 'Usuario';
 
@@ -57,18 +33,18 @@ function RolPage() {
                         className="shadow-md p-6 rounded-xl m-3 w-36 hover:border-2 hover:border-blue flex items-center justify-center" 
                         onClick={handleHome}
                     >
-                        <FontAwesomeIcon icon={faUser} className="m-2 text-3xl text-blue" />
+                        <FontAwesomeIcon icon={faUser} style={{ color: '#152E52' }} className="m-2 text-3xl" />
                         Pasajero
                     </button>
                     <button 
                         className="shadow-md p-6 rounded-xl m-3 w-36 hover:border-2 hover:border-blue flex items-center justify-center" 
                         onClick={handleHomeDriver}
                     >
-                        <FontAwesomeIcon icon={faCar} className="m-2 text-3xl text-blue" />
+                        <FontAwesomeIcon icon={faCar} style={{ color: '#152E52' }} className="m-2 text-3xl" />
                         Conductor
                     </button>
                 </section>
-                
+            
                 <section className="bg-blue w-full h-1/5 lg:hidden"></section>
             </div>
         </div>

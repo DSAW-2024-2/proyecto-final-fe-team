@@ -6,8 +6,11 @@ import HomePage from './components/HomePage.tsx'
 import HomePageDriver from './components/HomePageDriver.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import PublicRoute from './components/PublicRoute.tsx';
+import DriverRoute from './components/DriverRoute.tsx';
+import PassengerRoute from './components/PassengerRoute';
 import RolPage from './components/RolPage.tsx';
 import CarRegistrationPage from './components/CarRegistrationPage.tsx'
+import TripRegistrationPage from './components/TripRegistrationPage.tsx'
 import { isTokenValid } from './utils/auth.ts';
 
 const App: React.FC = () => {
@@ -23,13 +26,23 @@ const App: React.FC = () => {
 
         {/* Rutas protegidas */}
         <Route element={<ProtectedRoute />}>
+          {/* Ruta de selección de rol */}
           <Route path="/rol" element={<RolPage />} />
-          <Route path="/register-car" element={<CarRegistrationPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/homeDriver" element={<HomePageDriver />} />
+          
+          {/* Rutas para pasajeros */}
+          <Route element={<PassengerRoute />}>
+            <Route path="/home" element={<HomePage />} />
+          </Route>
+
+          {/* Rutas para conductores */}
+          <Route element={<DriverRoute />}>
+            <Route path="/home-driver" element={<HomePageDriver />} />
+            <Route path="/register-car" element={<CarRegistrationPage />} />
+            <Route path="/register-trip" element={<TripRegistrationPage />} />
+          </Route>
         </Route>
 
-        {/* Ruta por defecto */}
+        {/* Redirigir ruta raíz */}
         <Route 
           path="/" 
           element={
@@ -38,9 +51,6 @@ const App: React.FC = () => {
               : <Navigate to="/start" replace />
           } 
         />
-
-        {/* Ruta para manejar rutas no encontradas */}
-        <Route path="*" element={<Navigate to="/rol" replace />} />
       </Routes>
     </Router>
   );
