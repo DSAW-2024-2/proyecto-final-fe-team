@@ -47,11 +47,11 @@ const TripRegistrationPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 mt-2">
             <Header type="Conductor" />
             
             <div className="max-w-md mx-auto p-6">
-                <h1 className="text-24px text-blue mb-6">Crear viaje para...</h1>
+                <h1 className="text-h3 text-blue mb-6">Crear viaje para...</h1>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Fecha */}
