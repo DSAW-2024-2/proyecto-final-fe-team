@@ -9,6 +9,8 @@ import PublicRoute from './components/PublicRoute.tsx';
 import RolPage from './components/RolPage.tsx';
 import { isTokenValid } from './utils/auth.ts';
 import HomePageDriver from './components/HomePageDriver.tsx';
+import Profile from './components/Profile.tsx';
+import SuccessPage from './components/SuccessPage.tsx';
 
 
 const App: React.FC = () => {
@@ -23,6 +25,9 @@ const App: React.FC = () => {
 		  <Route path="/register" element={<SignUpPage />} />
 		  <Route path="/home" element={<HomePage />} />
 		  <Route path="/homeDriver" element={<HomePageDriver/>}/>
+		  <Route path="/profile" element={<Profile/>}/>
+		  <Route path="/success" element={<SuccessPage/>}/>
+
 
   
 		  {/* Rutas protegidas */}
