@@ -12,6 +12,8 @@ import RolPage from './components/RolPage.tsx';
 import CarRegistrationPage from './components/CarRegistrationPage.tsx'
 import TripRegistrationPage from './components/TripRegistrationPage.tsx'
 import VehicleInfoPage from './components/VehicleInfoPage.tsx';
+import Profile from './components/Profile.tsx';
+import SuccessPage from './components/SuccessPage.tsx';
 import { isTokenValid } from './utils/auth.ts';
 
 const App: React.FC = () => {
@@ -40,8 +42,12 @@ const App: React.FC = () => {
             <Route path="/home-driver" element={<HomePageDriver />} />
             <Route path="/register-car" element={<CarRegistrationPage />} />
             <Route path="/register-trip" element={<TripRegistrationPage />} />
-			<Route path="/vehicle-info" element={<VehicleInfoPage />} />
+            <Route path="/vehicle-info" element={<VehicleInfoPage />} />
           </Route>
+
+          {/* Rutas comunes protegidas */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/success" element={<SuccessPage />} />
         </Route>
 
         {/* Redirigir ruta raíz */}
