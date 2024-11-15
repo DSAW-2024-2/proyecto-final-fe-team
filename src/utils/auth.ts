@@ -12,6 +12,9 @@ interface TokenPayload {
   deviceId?: string;
 }
 
+// API Base URL
+export const API_BASE_URL = 'https://proyecto-final-be-team-chi.vercel.app';
+
 // Variable para controlar el estado de refresh
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -35,14 +38,12 @@ export const isTokenValid = (): boolean => {
     const payload = JSON.parse(atob(token.split('.')[1])) as TokenPayload;
     const expiration = payload.exp * 1000;
     
-    // Verificar el device fingerprint
     if (payload.deviceId && payload.deviceId !== generateDeviceFingerprint()) {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       return false;
     }
 
-    // Si el token expira en menos de 30 segundos, intentar refresh
     if (Date.now() >= (expiration - 30000)) {
       refreshAccessToken();
       return false;
@@ -57,17 +58,59 @@ export const isTokenValid = (): boolean => {
   }
 };
 
-export const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'X-Device-ID': generateDeviceFingerprint()
+export const getAuthHeaders = () => ({
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  'Content-Type': 'application/json',
+  'X-Device-ID': generateDeviceFingerprint()
+});
+
+export const fetchWithTokenRefresh = async (
+  url: string, 
+  options: RequestInit = {}
+): Promise<Response> => {
+  let attempts = 0;
+  const maxAttempts = 2;
+
+  const fetchWithCredentials = async (): Promise<Response> => {
+    if (attempts >= maxAttempts) {
+      throw new Error('Máximo de intentos alcanzado');
+    }
+
+    if (!isTokenValid() && attempts === 0) {
+      const refreshed = await refreshAccessToken();
+      if (!refreshed) {
+        throw new Error('Sesión expirada');
+      }
+    }
+
+    attempts++;
+    
+    const headers = { 
+      ...options.headers, 
+      ...getAuthHeaders()
+    };
+    
+    const response = await fetch(`${API_BASE_URL}${url}`, { 
+      ...options, 
+      headers,
+      credentials: 'include'
+    });
+
+    if (response.status === 401 && attempts < maxAttempts) {
+      const refreshed = await refreshAccessToken();
+      if (refreshed) {
+        return fetchWithCredentials();
+      }
+      throw new Error('Sesión expirada');
+    }
+
+    return response;
   };
+
+  return fetchWithCredentials();
 };
 
 export const refreshAccessToken = async (): Promise<boolean> => {
-  // Si ya hay un refresh en proceso, esperar a que termine
   if (isRefreshing) {
     return new Promise((resolve) => {
       refreshSubscribers.push((token: string) => {
@@ -85,13 +128,13 @@ export const refreshAccessToken = async (): Promise<boolean> => {
   }
 
   try {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    const response = await fetch(`${API_URL}/refresh-token`, {
+    const response = await fetch(`${API_BASE_URL}/refresh-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Device-ID': generateDeviceFingerprint()
       },
+      credentials: 'include',
       body: JSON.stringify({ 
         refreshToken,
         deviceId: generateDeviceFingerprint()
@@ -99,35 +142,14 @@ export const refreshAccessToken = async (): Promise<boolean> => {
     });
 
     if (!response.ok) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      isRefreshing = false;
-      refreshSubscribers = [];
-      return false;
+      throw new Error('Error refreshing token');
     }
 
     const data: RefreshTokenResponse = await response.json();
     
-    // Almacenar tokens en cookies HttpOnly si está disponible el endpoint
-    try {
-      await fetch(`${API_URL}/set-tokens`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken
-        }),
-        credentials: 'include'
-      });
-    } catch {
-      // Si falla el almacenamiento en cookies, usar localStorage como fallback
-      localStorage.setItem('token', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-    }
+    localStorage.setItem('token', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
     
-    // Notificar a todos los subscribers que el token se ha actualizado
     refreshSubscribers.forEach(callback => callback(data.accessToken));
     refreshSubscribers = [];
     
@@ -140,51 +162,4 @@ export const refreshAccessToken = async (): Promise<boolean> => {
     refreshSubscribers = [];
     return false;
   }
-};
-
-export const fetchWithTokenRefresh = async (
-  url: string, 
-  options: RequestInit = {}
-): Promise<Response> => {
-  let attempts = 0;
-  const maxAttempts = 2;
-
-  async function attemptFetch(): Promise<Response> {
-    if (attempts >= maxAttempts) {
-      throw new Error('Máximo de intentos alcanzado');
-    }
-
-    if (!isTokenValid() && attempts === 0) {
-      const refreshed = await refreshAccessToken();
-      if (!refreshed) {
-        throw new Error('Sesión expirada');
-      }
-    }
-
-    attempts++;
-    
-    const headers = { 
-      ...options.headers, 
-      ...getAuthHeaders(),
-      'X-Device-ID': generateDeviceFingerprint()
-    };
-    
-    const response = await fetch(url, { 
-      ...options, 
-      headers,
-      credentials: 'include' // Para soportar cookies
-    });
-
-    if (response.status === 401 && attempts < maxAttempts) {
-      const refreshed = await refreshAccessToken();
-      if (refreshed) {
-        return attemptFetch();
-      }
-      throw new Error('Sesión expirada');
-    }
-
-    return response;
-  }
-
-  return attemptFetch();
 };

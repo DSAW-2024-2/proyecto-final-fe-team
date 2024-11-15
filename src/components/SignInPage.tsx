@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import BackgroundAnimation from '../elements/BackgroundAnimation';
+import { API_BASE_URL } from '../utils/auth';
 
 interface LoginFormData {
   email: string;
@@ -27,8 +28,6 @@ const SignInPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || 'https://proyecto-final-fe-team-qg0gyszj9-gabrielabejarano09s-projects.vercel.app/login';
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -48,13 +47,13 @@ const SignInPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData),
-        credentials: 'include'
+        credentials: 'include',
+        body: JSON.stringify(formData)
       });
 
       const data: LoginResponse = await response.json();
@@ -73,16 +72,6 @@ const SignInPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-
-       // <img 
-       //   src="/src/assets/Background.jpg" 
-        //  alt="Background with circles" 
-        //  className="h-screen w-screen object-cover"
-        
-        ///>
-
-
 
   return (
     <div className="h-screen flex">
