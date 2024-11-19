@@ -113,7 +113,7 @@ function CarRegistrationPage() {
             }
 
             // Registro exitoso
-            navigate('/homeDriver');
+            navigate('/home-driver');
 
         } catch (error) {
             if (error instanceof Error) {

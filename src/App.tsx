@@ -38,9 +38,9 @@ const App: React.FC = () => {
           </Route>
 
           {/* Rutas para conductores */}
+          <Route path="/register-car" element={<CarRegistrationPage />} />
           <Route element={<DriverRoute />}>
             <Route path="/home-driver" element={<HomePageDriver />} />
-            <Route path="/register-car" element={<CarRegistrationPage />} />
             <Route path="/register-trip" element={<TripRegistrationPage />} />
             <Route path="/vehicle-info" element={<VehicleInfoPage />} />
           </Route>
