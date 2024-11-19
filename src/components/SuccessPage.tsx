@@ -1,8 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SuccessPage: React.FC = () => {
+
+    const navigate = useNavigate();
+
     const handleNext = () => {
-        // Aquí va la lógica para la acción "Siguiente", como redirigir a otra página
+        navigate('/home-driver');
     };
 
     return (
@@ -16,7 +20,7 @@ const SuccessPage: React.FC = () => {
 
             {/* Mensaje de Éxito */}
             <h1 className="text-white text-xl md:text-2xl font-bold mb-2">¡Éxito!</h1>
-            <p className="text-white text-base md:text-lg mb-6 md:mb-10 text-center px-4 md:px-0">Yay! Haz creado un nuevo viaje</p>
+            <p className="text-white text-base md:text-lg mb-6 md:mb-10 text-center px-4 md:px-0">¡Haz creado un nuevo viaje!</p>
 
             {/* Botón de Siguiente */}
             <button

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../elements/Header';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faDollarSign, faCreditCard } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 interface PaymentMethod {
     id: string;
@@ -10,17 +11,21 @@ interface PaymentMethod {
 }
 
 const TripRegistrationPage = () => {
-    const [date, setDate] = useState<string>('');
+    const [tripDate, setTripDate] = useState<string>('');
     const [origin, setOrigin] = useState<string>('');
     const [destination, setDestination] = useState<string>('');
     const [arrivalTime, setArrivalTime] = useState<string>('');
     const [departureTime, setDepartureTime] = useState<string>('');
     const [cost, setCost] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-        { id: 'nequi', name: 'Nequi', enabled: true },
-        { id: 'daviplata', name: 'Daviplata', enabled: true },
+        { id: 'nequi', name: 'Nequi', enabled: false },
+        { id: 'daviplata', name: 'Daviplata', enabled: false },
         { id: 'efectivo', name: 'Efectivo', enabled: false }
     ]);
+
+    const navigate = useNavigate();
 
     const handlePaymentMethodToggle = (methodId: string) => {
         setPaymentMethods(methods =>
@@ -32,18 +37,59 @@ const TripRegistrationPage = () => {
         );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Aquí iría la lógica para enviar los datos del viaje
-        console.log({
-            date,
-            origin,
-            destination,
-            arrivalTime,
-            departureTime,
-            cost,
-            acceptedPaymentMethods: paymentMethods.filter(m => m.enabled).map(m => m.name)
-        });
+        setError('');
+        setIsLoading(true);
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            setError('No hay sesión activa. Por favor, inicie sesión nuevamente.');
+            navigate('/login');
+            return;
+        }
+
+        try {
+            // Construir el objeto de viaje
+            const tripData = {
+                tripDate,
+                origin,
+                destination,
+                arrivalTime,
+                departureTime,
+                cost: Number(cost),
+                paymentMethods: paymentMethods
+                    .filter(method => method.enabled)
+                    .map(method => method.id),
+                affinity: "No especificada",
+                description: ""
+            };
+
+            const response = await fetch(`${API_URL}/api/trips`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(tripData)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Error al crear el viaje');
+            }
+
+            // Redireccionar a la página de éxito
+            navigate('/success');
+
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Error al crear el viaje');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -51,25 +97,26 @@ const TripRegistrationPage = () => {
             <Header type="Conductor" />
             
             <div className="max-w-md mx-auto p-6">
-                <h1 className="text-h3 text-blue mb-6">Crear viaje para...</h1>
+                <h1 className="text-h3 text-blue mb-6">Crear viaje</h1>
                 
+                {error && (
+                    <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                        {error}
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Fecha */}
-                    <div className="flex space-x-4">
+                    <div>
+                        <label className="block text-sm font-medium text-blue mb-2">
+                            Fecha del viaje
+                        </label>
                         <input
-                            type="number"
-                            value={date.split('-')[2] || '15'}
-                            className="w-16 p-2 border rounded-lg text-center text-blue"
-                        />
-                        <input
-                            type="text"
-                            value="Septiembre"
-                            className="flex-grow p-2 border rounded-lg text-center text-blue"
-                        />
-                        <input
-                            type="number"
-                            value="2024"
-                            className="w-20 p-2 border rounded-lg text-center text-blue"
+                            type="date"
+                            value={tripDate}
+                            onChange={(e) => setTripDate(e.target.value)}
+                            className="w-full p-2 border rounded-lg text-blue"
+                            required
                         />
                     </div>
 
@@ -84,6 +131,7 @@ const TripRegistrationPage = () => {
                                 value={origin}
                                 onChange={(e) => setOrigin(e.target.value)}
                                 className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                                required
                             />
                         </div>
                         <div className="flex items-center space-x-2">
@@ -95,6 +143,7 @@ const TripRegistrationPage = () => {
                                 value={destination}
                                 onChange={(e) => setDestination(e.target.value)}
                                 className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                                required
                             />
                         </div>
                     </div>
@@ -106,10 +155,10 @@ const TripRegistrationPage = () => {
                             <span className="text-blue">Salida</span>
                             <input
                                 type="time"
-                                placeholder="Hora Llegada"
-                                value={arrivalTime}
-                                onChange={(e) => setArrivalTime(e.target.value)}
+                                value={departureTime}
+                                onChange={(e) => setDepartureTime(e.target.value)}
                                 className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                                required
                             />
                         </div>
                         <div className="flex items-center space-x-2">
@@ -117,10 +166,10 @@ const TripRegistrationPage = () => {
                             <span className="text-blue">Llegada</span>
                             <input
                                 type="time"
-                                placeholder="Hora Salida"
-                                value={departureTime}
-                                onChange={(e) => setDepartureTime(e.target.value)}
+                                value={arrivalTime}
+                                onChange={(e) => setArrivalTime(e.target.value)}
                                 className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                                required
                             />
                         </div>
                     </div>
@@ -134,6 +183,8 @@ const TripRegistrationPage = () => {
                             value={cost}
                             onChange={(e) => setCost(e.target.value)}
                             className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                            required
+                            min="1000"
                         />
                     </div>
 
@@ -162,9 +213,10 @@ const TripRegistrationPage = () => {
                     {/* Botón de envío */}
                     <button
                         type="submit"
-                        className="w-full bg-green text-white p-3 rounded-3xl font-semibold hover:bg-blue transition-colors"
+                        disabled={isLoading}
+                        className="w-full bg-green text-white p-3 rounded-3xl font-semibold hover:bg-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Crear Viaje
+                        {isLoading ? 'Creando viaje...' : 'Crear Viaje'}
                     </button>
                 </form>
             </div>
