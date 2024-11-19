@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import Header from '../elements/Header';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faDollarSign, faCreditCard, faRoute } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faDollarSign, faCreditCard, faRoute, faBan } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 interface PaymentMethod {
@@ -15,18 +16,24 @@ interface RouteTag {
     name: string;
 }
 
+interface AffinityTag {
+    id: string;
+    name: string;
+}
+
 const TripRegistrationPage = () => {
-    const [date, setDate] = useState<string>('');
+    const [tripDate, setTripDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [origin, setOrigin] = useState<string>('');
     const [destination, setDestination] = useState<string>('');
     const [arrivalTime, setArrivalTime] = useState<string>('');
     const [departureTime, setDepartureTime] = useState<string>('');
     const [cost, setCost] = useState<string>('');
     const [selectedRoute, setSelectedRoute] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
+    const [selectedAffinities, setSelectedAffinities] = useState<string[]>([]);
     const [error, setError] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    // Rutas predefinidas
     const routeTags: RouteTag[] = [
         { id: 'boyaca', name: 'Boyacá' },
         { id: 'autopista', name: 'Autopista Norte' },
@@ -38,6 +45,15 @@ const TripRegistrationPage = () => {
         { id: 'mosquera', name: 'Mosquera' },
         { id: 'calle80', name: 'Calle 80' },
         { id: 'chia', name: 'Chía' },
+    ];
+
+    const affinityTags: AffinityTag[] = [
+        { id: 'no-smoking', name: 'No fumar' },
+        { id: 'no-music', name: 'No música' },
+        { id: 'no-pets', name: 'Sin mascotas' },
+        { id: 'no-food', name: 'Sin alimentos' },
+        { id: 'no-ac', name: 'Sin aire acondicionado' },
+        { id: 'no-fragrances', name: 'Sin ambientadores' }
     ];
 
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
@@ -58,6 +74,14 @@ const TripRegistrationPage = () => {
         );
     };
 
+    const handleAffinityToggle = (affinityId: string) => {
+        setSelectedAffinities(current =>
+            current.includes(affinityId)
+                ? current.filter(id => id !== affinityId)
+                : [...current, affinityId]
+        );
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -73,34 +97,53 @@ const TripRegistrationPage = () => {
         }
 
         try {
+            if (!origin.trim()) throw new Error('El origen es requerido');
+            if (!destination.trim()) throw new Error('El destino es requerido');
+            if (!departureTime) throw new Error('La hora de salida es requerida');
+            if (!arrivalTime) throw new Error('La hora de llegada es requerida');
+            if (!selectedRoute) throw new Error('Debe seleccionar una ruta');
+            if (!cost || Number(cost) <= 0) throw new Error('El costo debe ser mayor a 0');
+
+            const selectedPaymentMethods = paymentMethods
+                .filter(method => method.enabled)
+                .map(method => method.id);
+
+            if (selectedPaymentMethods.length === 0) {
+                throw new Error('Debe seleccionar al menos un método de pago');
+            }
+
+            const affinityNames = selectedAffinities.map(id => 
+                affinityTags.find(tag => tag.id === id)?.name || ''
+            ).filter(name => name !== '');
+
             const response = await fetch(`${API_URL}/api/trips`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                credentials: 'include',
                 body: JSON.stringify({
-                    date,
+                    tripDate,
                     origin,
                     destination,
                     arrivalTime,
                     departureTime,
-                    cost,
+                    cost: Number(cost),
                     routeTag: selectedRoute,
-                    paymentMethods: paymentMethods
-                        .filter(method => method.enabled)
-                        .map(method => method.id)
+                    paymentMethods: selectedPaymentMethods,
+                    affinity: affinityNames.join(', ') || "Sin restricciones",
+                    description: description || ""
                 })
             });
 
             if (!response.ok) {
-                throw new Error('Error al crear el viaje');
+                const data = await response.json();
+                throw new Error(data.message || 'Error al crear el viaje');
             }
 
             navigate('/success');
         } catch (error) {
-            setError('Error al crear el viaje. Por favor, intente nuevamente.');
+            setError(error instanceof Error ? error.message : 'Error al crear el viaje. Por favor, intente nuevamente.');
         } finally {
             setIsLoading(false);
         }
@@ -115,22 +158,17 @@ const TripRegistrationPage = () => {
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Fecha */}
-                    <div className="flex space-x-4">
+                    <div>
+                        <label htmlFor="tripDate" className="block text-sm font-medium text-blue mb-2">
+                            Fecha del viaje
+                        </label>
                         <input
-                            type="number"
-                            value={date.split('-')[2] || '15'}
-                            onChange={(e) => setDate(e.target.value)}
-                            className="w-16 p-2 border rounded-lg text-center text-blue"
-                        />
-                        <input
-                            type="text"
-                            value="Septiembre"
-                            className="flex-grow p-2 border rounded-lg text-center text-blue"
-                        />
-                        <input
-                            type="number"
-                            value="2024"
-                            className="w-20 p-2 border rounded-lg text-center text-blue"
+                            type="date"
+                            id="tripDate"
+                            value={tripDate}
+                            onChange={(e) => setTripDate(e.target.value)}
+                            className="w-full p-2 border rounded-lg text-blue"
+                            min={new Date().toISOString().split('T')[0]}
                         />
                     </div>
 
@@ -191,9 +229,8 @@ const TripRegistrationPage = () => {
                             <span className="text-blue">Salida</span>
                             <input
                                 type="time"
-                                placeholder="Hora Llegada"
-                                value={arrivalTime}
-                                onChange={(e) => setArrivalTime(e.target.value)}
+                                value={departureTime}
+                                onChange={(e) => setDepartureTime(e.target.value)}
                                 className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
                             />
                         </div>
@@ -202,9 +239,8 @@ const TripRegistrationPage = () => {
                             <span className="text-blue">Llegada</span>
                             <input
                                 type="time"
-                                placeholder="Hora Salida"
-                                value={departureTime}
-                                onChange={(e) => setDepartureTime(e.target.value)}
+                                value={arrivalTime}
+                                onChange={(e) => setArrivalTime(e.target.value)}
                                 className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
                             />
                         </div>
@@ -218,7 +254,52 @@ const TripRegistrationPage = () => {
                             placeholder="Costo"
                             value={cost}
                             onChange={(e) => setCost(e.target.value)}
+                            min="1000"
+                            max="100000"
                             className="flex-grow p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                        />
+                    </div>
+
+                    {/* Afinidad Tags */}
+                    <div className="space-y-2">
+                        <div className="flex items-center space-x-2 mb-2">
+                            <FontAwesomeIcon icon={faBan} className="text-blue" />
+                            <span className="text-blue">Restricciones del viaje</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {affinityTags.map((tag) => (
+                                <button
+                                    key={tag.id}
+                                    type="button"
+                                    onClick={() => handleAffinityToggle(tag.id)}
+                                    className={`px-4 py-2 rounded-full text-sm flex items-center space-x-2 ${
+                                        selectedAffinities.includes(tag.id)
+                                            ? 'bg-blue text-white'
+                                            : 'bg-white text-blue border border-blue'
+                                    }`}
+                                >
+                                    <FontAwesomeIcon 
+                                        icon={faBan} 
+                                        className={`${selectedAffinities.includes(tag.id) ? 'text-white' : 'text-blue'}`} 
+                                    />
+                                    <span>{tag.name}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Descripción */}
+                    <div>
+                        <label htmlFor="description" className="block text-sm font-medium text-blue mb-2">
+                            Descripción adicional (opcional)
+                        </label>
+                        <textarea
+                            id="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Añade detalles adicionales sobre el viaje"
+                            className="w-full p-2 border rounded-3xl focus:ring-2 focus:ring-green focus:outline-none"
+                            rows={3}
                         />
                     </div>
 
@@ -246,7 +327,7 @@ const TripRegistrationPage = () => {
 
                     {/* Error message */}
                     {error && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 text-sm p-3 bg-red-50 rounded-lg">
                             {error}
                         </div>
                     )}
@@ -255,7 +336,9 @@ const TripRegistrationPage = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-green text-white p-3 rounded-3xl font-semibold hover:bg-blue transition-colors disabled:opacity-50"
+                        className={`w-full bg-green text-white p-3 rounded-3xl font-semibold hover:bg-blue transition-colors ${
+                            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
                     >
                         {isLoading ? 'Creando viaje...' : 'Crear Viaje'}
                     </button>
