@@ -42,6 +42,7 @@ const TravelCard: React.FC<TravelCardProps> = ({
       <div className="p-4 flex flex-col justify-between w-full">
         <div className="flex items-center mb-3">
           <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+            <span className="text-4xl w-12 h-12 text-blue flex  justify-center items-center ml-0.5">👤</span>
           </div>
           <div>
             <h3 className="text-h1 text-blue">{name}</h3>
@@ -54,7 +55,9 @@ const TravelCard: React.FC<TravelCardProps> = ({
         <div className="flex mb-3 items-center">
           <div className="flex flex-col items-center justify-center mr-4">
             <p className="text-h1 font-bold text-blue">{date.split(" ")[0]}</p>
-            <p className="text-h1  text-blue">{date.split(" ")[1]}</p>
+            <p className="text-h1 text-blue">
+              {date.split(" ")[1]?.replace(/^\w/, (c) => c.toUpperCase())}
+            </p>
           </div>
           <div className="flex flex-col justify-between ">
             <div className="flex items-center mb-1">
