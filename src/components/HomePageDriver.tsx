@@ -40,7 +40,7 @@ function HomePageDriver() {
 
                     </div>
                     <img
-                        src="/src/assets/Logo-home.png"
+                        src="/assets/Logo-home.png"
                         alt="Background with circles"
                         className="object-cover w-2/6 hidden md:flex"
                     />

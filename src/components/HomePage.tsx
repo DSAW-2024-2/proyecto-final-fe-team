@@ -82,7 +82,7 @@ function HomePage() {
             <p className="text-h2 text-blue w-full md:pl-20">¡Ten un lindo día!</p>
           </div>
           <img
-            src="/src/assets/logoCircle.png"
+            src="/assets/logoCircle.png"
             alt="Background with circles"
             className="object-cover w-2/6 hidden md:flex"
           />
