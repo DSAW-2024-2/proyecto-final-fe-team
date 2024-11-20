@@ -2,12 +2,12 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import SignInPage from './components/SignInPage.tsx';
 import SignUpPage from './components/SignUpPage.tsx';
 import StartPage from './components/StartPage.tsx';
-import HomePage from './components/HomePage.tsx'
+import HomePage from './components/HomePage.tsx';
 import HomePageDriver from './components/HomePageDriver.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import PublicRoute from './components/PublicRoute.tsx';
 import DriverRoute from './components/DriverRoute.tsx';
-import PassengerRoute from './components/PassengerRoute';
+import PassengerRoute from './components/PassengerRoute.tsx';
 import RolPage from './components/RolPage.tsx';
 import CarRegistrationPage from './components/CarRegistrationPage.tsx'
 import TripRegistrationPage from './components/TripRegistrationPage.tsx'
@@ -16,6 +16,9 @@ import VehicleInfoPage from './components/VehicleInfoPage.tsx';
 import Profile from './components/Profile.tsx';
 import SuccessPage from './components/SuccessPage.tsx';
 import { isTokenValid } from './utils/auth.ts';
+import SearchTrip from './components/SearchTrip.tsx';
+import Ticket from './components/Ticket.tsx'
+
 
 const App: React.FC = () => {
   return (
@@ -36,6 +39,8 @@ const App: React.FC = () => {
           {/* Rutas para pasajeros */}
           <Route element={<PassengerRoute />}>
             <Route path="/home" element={<HomePage />} />
+            <Route path="/search-trip" element={<SearchTrip/>} />
+            <Route path="/ticket" element={<Ticket/>} />
           </Route>
 
           {/* Rutas para conductores */}

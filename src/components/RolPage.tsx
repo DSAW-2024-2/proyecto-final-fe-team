@@ -24,8 +24,8 @@ function RolPage() {
             <div className="w-full h-[100vh] lg:-m-10 lg:absolute lg:h-[100vh] lg:w-[50vw] lg:rounded-full flex flex-col justify-between lg:justify-around items-center text-blue lg:bg-white">
                 <section className="mt-24 lg:mt-4">
                     <h1 className="text-[25px] mb-14 font-bold">Hola {userName},</h1>
-                    <h2 className="text-[22px] font-bold">¿cuál será tu rol hoy?</h2>
-                    <p className="mt-4">luego podrás cambiarlo si lo deseas</p>
+                    <h2 className="text-[22px] font-bold">¿Cuál será tu rol hoy?</h2>
+                    <p className="mt-4">Luego podrás cambiarlo si lo deseas</p>
                 </section>
 
                 <section className="-mt-24 lg:-mt-48 flex">
