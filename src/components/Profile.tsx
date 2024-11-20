@@ -141,7 +141,7 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center bg-white min-h-screen p-6">
+    <div className="flex flex-col items-center bg-white min-h-screen mt-2">
       <Header type={localStorage.getItem('userRole') === 'driver' ? 'Conductor' : 'Pasajero'} />
       
       <div className="w-full max-w-md p-6">

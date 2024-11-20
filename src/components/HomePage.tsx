@@ -1,139 +1,185 @@
-import React, { useEffect, useState } from "react";
-import TravelCard from "../elements/TravelCard.tsx";
-import SmallTravelCard from "../elements/SmallTravelCard.tsx";
-import Header from "../elements/Header.tsx";
+import { useState, useEffect } from 'react';
+import TravelCard from '../elements/TravelCard.tsx';
+import SmallTravelCard from '../elements/SmallTravelCard.tsx';
+import Header from '../elements/Header.tsx';
 import SmallTravelCardText from '../elements/SmallTravelCardText.tsx';
 
-
-// Definimos el tipo para los viajes
-type Trip = {
+interface Trip {
   id: string;
+  driverId: string;
   driverName: string;
-  driverVehicle?: {
-    rating?: number;
+  driverVehicle: {
+    plate: string;
+    color: string;
+    brand: string;
+    model: string;
+    availableSeats: number;
   };
-  tripDate: string | Date;
+  tripDate: string;
   origin: string;
   destination: string;
-  departureTime: string;
   arrivalTime: string;
+  departureTime: string;
   cost: number;
-  affinity?: string;
-};
+  paymentMethods: string[];
+  routeTag: string;
+  affinity: string;
+  description: string;
+  status: string;
+  passengers: string[];
+  availableSeats: number;
+}
 
 function HomePage() {
-  const [trips, setTrips] = useState<Trip[]>([]); // Definimos el tipo del estado
-  const userName = localStorage.getItem("userName") || "Usuario";
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [nextTrip, setNextTrip] = useState<Trip | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const userName = localStorage.getItem('userName') || 'Usuario';
 
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trips`);
-        const data = await response.json();
-
-        if (data.success && Array.isArray(data.data)) {
-          const now = new Date();
-
-          const upcomingTrips = data.data.filter((trip: Trip) => {
-            const tripDate = trip.tripDate instanceof Date ? trip.tripDate : new Date(trip.tripDate);
-            if (isNaN(tripDate.getTime())) {
-              console.warn("Fecha inválida en trip:", trip);
-              return false;
-            }
-            return tripDate > now;
-          });
-
-          setTrips(upcomingTrips);
-        } else {
-          console.error("Formato de respuesta inválido", data);
-        }
-      } catch (error) {
-        console.error("Error al conectar con la API:", error);
-      }
-    };
-
     fetchTrips();
   }, []);
 
+  const fetchTrips = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        throw new Error('No hay sesión activa');
+      }
+
+      const response = await fetch(`${API_URL}/api/trips`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al obtener los viajes');
+      }
+
+      const data = await response.json();
+      
+      if (!data.data || !Array.isArray(data.data)) {
+        throw new Error('Formato de datos inválido');
+      }
+
+      // Ordenar viajes por fecha
+      const sortedTrips = data.data.sort((a: Trip, b: Trip) => {
+        return new Date(a.tripDate).getTime() - new Date(b.tripDate).getTime();
+      });
+
+      setTrips(sortedTrips);
+
+      // Establecer el próximo viaje (el primero después de la fecha actual)
+      const now = new Date();
+      const nextTrip = sortedTrips.find((trip: Trip) => new Date(trip.tripDate) > now);
+      setNextTrip(nextTrip || null);
+
+    } catch (error) {
+      console.error('Error fetching trips:', error);
+      setError(error instanceof Error ? error.message : 'Error desconocido');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-blue">Cargando viajes...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    
     <div className="min-h-screen flex flex-col md:flex-row md:mt-2 items-center flex-wrap gap-4">
-      <Header
-        type="Pasajero"
-      />
+      <Header type="Pasajero" />
+      
       <div className='w-full md:hidden'>
         <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
-        <p className='text-h2 text-blue font-bold w-full md:pl-20'>Tu proximo viaje: </p>
+        <p className='text-h2 text-blue font-bold w-full md:pl-20'>Tu próximo viaje: </p>
         <div className="flex w-full h-min md:justify-start">
-          <SmallTravelCard
-            name="Laura Pérez"
-            date="23 Sept"
-            startLocation="Calle 45 Norte"
-            endLocation="Universidad"
-            startTime="9:00 AM"
-            endTime="11:15 AM"
-            cost={7000}
-          />
+          {nextTrip && (
+            <SmallTravelCard
+              name={nextTrip.driverName}
+              date={new Date(nextTrip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+              startLocation={nextTrip.origin}
+              endLocation={nextTrip.destination}
+              startTime={nextTrip.departureTime}
+              endTime={nextTrip.arrivalTime}
+              cost={nextTrip.cost}
+            />
+          )}
         </div>
       </div>
 
-      <div className='md:flex w-full justify-between space-x-4 mx-20 hidden '>
+      <div className='md:flex w-full justify-between space-x-4 mx-20 hidden'>
         <div className='flex justify-between w-3/5 bg-green rounded-xl py-6 pr-11'>
-          <div className='flex flex-col justify-end mb-4 '>
+          <div className='flex flex-col justify-end mb-4'>
             <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
-            <p className='text-h2 text-blue  w-full md:pl-20'>¡Ten un lindo dia!</p>
-            
+            <p className='text-h2 text-blue w-full md:pl-20'>¡Ten un lindo día!</p>
           </div>
           <img
-              src="/src/assets/logoCircle.png"
-              alt="Background with circles"
-              className="object-cover w-2/6 hidden md:flex"
-            />
-            
+            src="/src/assets/logoCircle.png"
+            alt="Background with circles"
+            className="object-cover w-2/6 hidden md:flex"
+          />
         </div>
 
         <div className='flex flex-col w-2/5 bg-blue rounded-xl pt-9 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg'>
-        <p className='text-h2 text-white font-bold w-full md:pl-20'>Tu proximo viaje: </p>
-          <SmallTravelCardText
-            name="Laura Pérez"
-            date="23 Sept"
-            startLocation="Calle 45 Norte"
-            endLocation="Universidad"
-            startTime="9:00 AM"
-            endTime="11:15 AM"
-            cost={7000}
-            color="white"
-          />
+          <p className='text-h2 text-white font-bold w-full md:pl-20'>Tu próximo viaje: </p>
+          {nextTrip && (
+            <SmallTravelCardText
+              name={nextTrip.driverName}
+              date={new Date(nextTrip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+              startLocation={nextTrip.origin}
+              endLocation={nextTrip.destination}
+              startTime={nextTrip.departureTime}
+              endTime={nextTrip.arrivalTime}
+              cost={nextTrip.cost}
+              color="white"
+            />
+          )}
         </div>
-
       </div>
 
-      <p className="text-h2 text-blue font-bold w-full md:pl-20 mt-5">Todos los viajes disponibles</p>
-      
-      {trips.length > 0 ? (
-        trips.map((trip: Trip) => (
-          
+      <p className='text-h2 text-blue font-bold w-full md:pl-20 mt-5'>
+        Todos los viajes disponibles
+      </p>
+
+      {trips.length === 0 ? (
+        <p className="text-gray-500 text-center w-full">No hay viajes disponibles en este momento.</p>
+      ) : (
+        trips.map((trip) => (
           <TravelCard
             key={trip.id}
+            id={trip.id}
             name={trip.driverName}
-            rating={trip.driverVehicle?.rating || 0}
-            date={(() => {
-              const tripDate = trip.tripDate instanceof Date ? trip.tripDate : new Date(trip.tripDate);
-              return tripDate
-                .toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })
-                .replace(/^\w/, (c) => c.toUpperCase());
-            })()}
+            rating={4} // Esto debería venir de la base de datos en una implementación futura
+            date={new Date(trip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
             startLocation={trip.origin}
             endLocation={trip.destination}
             startTime={trip.departureTime}
             endTime={trip.arrivalTime}
             cost={trip.cost}
-            affinity={trip.affinity || "N/A"}
-            imageVehicle="https://via.placeholder.com/150"
+            affinity={trip.affinity}
+            imageVehicle={trip.driverVehicle ? `/src/assets/cars/${trip.driverVehicle.brand.toLowerCase()}.jpg` : '/src/assets/default-car.jpg'}
           />
         ))
-      ) : (
-        <p className="text-blue">No hay viajes disponibles en este momento.</p>
       )}
     </div>
   );

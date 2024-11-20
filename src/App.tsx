@@ -11,6 +11,7 @@ import PassengerRoute from './components/PassengerRoute';
 import RolPage from './components/RolPage.tsx';
 import CarRegistrationPage from './components/CarRegistrationPage.tsx'
 import TripRegistrationPage from './components/TripRegistrationPage.tsx'
+import TripInfoPage from './components/TripInfoPage.tsx'
 import VehicleInfoPage from './components/VehicleInfoPage.tsx';
 import Profile from './components/Profile.tsx';
 import SuccessPage from './components/SuccessPage.tsx';
@@ -38,9 +39,9 @@ const App: React.FC = () => {
           </Route>
 
           {/* Rutas para conductores */}
-          <Route path="/register-car" element={<CarRegistrationPage />} />
           <Route element={<DriverRoute />}>
             <Route path="/home-driver" element={<HomePageDriver />} />
+            <Route path="/register-car" element={<CarRegistrationPage />} />
             <Route path="/register-trip" element={<TripRegistrationPage />} />
             <Route path="/vehicle-info" element={<VehicleInfoPage />} />
           </Route>
@@ -48,6 +49,7 @@ const App: React.FC = () => {
           {/* Rutas comunes protegidas */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/success" element={<SuccessPage />} />
+          <Route path="/trip/:tripId" element={<TripInfoPage />} />
         </Route>
 
         {/* Redirigir ruta raíz */}
