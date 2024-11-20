@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import TravelCard from "../elements/TravelCard.tsx";
 import SmallTravelCard from "../elements/SmallTravelCard.tsx";
 import Header from "../elements/Header.tsx";
-import SmallTravelCardText from '../elements/SmallTravelCardText.tsx';
-
+import SmallTravelCardText from "../elements/SmallTravelCardText.tsx";
 
 // Definimos el tipo para los viajes
 type Trip = {
@@ -23,7 +22,7 @@ type Trip = {
 
 function HomePage() {
   const [trips, setTrips] = useState<Trip[]>([]); // Definimos el tipo del estado
-  const userName = localStorage.getItem("userName") || "Usuario";
+  const userName = localStorage.getItem("userName") || "Usuario"; // Obtener nombre de usuario desde localStorage
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -40,7 +39,9 @@ function HomePage() {
               console.warn("Fecha inválida en trip:", trip);
               return false;
             }
-            return tripDate > now;
+
+            // Excluir viajes creados por el usuario actual y que sean en el futuro
+            return tripDate > now && trip.driverName !== userName;
           });
 
           setTrips(upcomingTrips);
@@ -53,17 +54,14 @@ function HomePage() {
     };
 
     fetchTrips();
-  }, []);
+  }, [userName]); // Dependencia añadida para asegurarse de usar el valor actualizado de userName
 
   return (
-    
     <div className="min-h-screen flex flex-col md:flex-row md:mt-2 items-center flex-wrap gap-4">
-      <Header
-        type="Pasajero"
-      />
-      <div className='w-full md:hidden'>
-        <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
-        <p className='text-h2 text-blue font-bold w-full md:pl-20'>Tu proximo viaje: </p>
+      <Header type="Pasajero" />
+      <div className="w-full md:hidden">
+        <p className="text-h1 text-blue font-bold w-full md:pl-20">Bienvenido {userName},</p>
+        <p className="text-h2 text-blue font-bold w-full md:pl-20">Tu próximo viaje: </p>
         <div className="flex w-full h-min md:justify-start">
           <SmallTravelCard
             name="Laura Pérez"
@@ -77,23 +75,21 @@ function HomePage() {
         </div>
       </div>
 
-      <div className='md:flex w-full justify-between space-x-4 mx-20 hidden '>
-        <div className='flex justify-between w-3/5 bg-green rounded-xl py-6 pr-11'>
-          <div className='flex flex-col justify-end mb-4 '>
-            <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
-            <p className='text-h2 text-blue  w-full md:pl-20'>¡Ten un lindo dia!</p>
-            
+      <div className="md:flex w-full justify-between space-x-4 mx-20 hidden">
+        <div className="flex justify-between w-3/5 bg-green rounded-xl py-6 pr-11">
+          <div className="flex flex-col justify-end mb-4">
+            <p className="text-h1 text-blue font-bold w-full md:pl-20">Bienvenido {userName},</p>
+            <p className="text-h2 text-blue w-full md:pl-20">¡Ten un lindo día!</p>
           </div>
           <img
-              src="/src/assets/logoCircle.png"
-              alt="Background with circles"
-              className="object-cover w-2/6 hidden md:flex"
-            />
-            
+            src="/src/assets/logoCircle.png"
+            alt="Background with circles"
+            className="object-cover w-2/6 hidden md:flex"
+          />
         </div>
 
-        <div className='flex flex-col w-2/5 bg-blue rounded-xl pt-9 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg'>
-        <p className='text-h2 text-white font-bold w-full md:pl-20'>Tu proximo viaje: </p>
+        <div className="flex flex-col w-2/5 bg-blue rounded-xl pt-9 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg">
+          <p className="text-h2 text-white font-bold w-full md:pl-20">Tu próximo viaje: </p>
           <SmallTravelCardText
             name="Laura Pérez"
             date="23 Sept"
@@ -105,14 +101,12 @@ function HomePage() {
             color="white"
           />
         </div>
-
       </div>
 
       <p className="text-h2 text-blue font-bold w-full md:pl-20 mt-5">Todos los viajes disponibles</p>
-      
+
       {trips.length > 0 ? (
         trips.map((trip: Trip) => (
-          
           <TravelCard
             id={trip.id}
             key={trip.id}
@@ -121,7 +115,7 @@ function HomePage() {
             date={(() => {
               const tripDate = trip.tripDate instanceof Date ? trip.tripDate : new Date(trip.tripDate);
               return tripDate
-                .toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })
+                .toLocaleDateString("es-ES", { month: "short", day: "numeric" })
                 .replace(/^\w/, (c) => c.toUpperCase());
             })()}
             startLocation={trip.origin}
@@ -134,7 +128,7 @@ function HomePage() {
           />
         ))
       ) : (
-        <p className="text-blue">No hay viajes disponibles en este momento.</p>
+        <p className="text-blue md:pl-20 mt-5">No hay viajes disponibles en este momento.</p>
       )}
     </div>
   );
