@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface TravelCardProps {
-  id: string; // Añadimos el id como prop
+  id: string;
   name: string;
   rating: number;
   date: string;
@@ -41,20 +41,26 @@ const TravelCard: React.FC<TravelCardProps> = ({
   const handleViewTrip = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Navigating to trip:', id);
     navigate(`/trip/${id}`);
   };
 
   return (
     <div className="flex flex-col bg-white shadow-md rounded-lg overflow-hidden w-80 mx-auto mt-3 border border-gray-200 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg">
-      <img src={imageVehicle} alt="Vehicle" className="w-full h-40 object-cover rounded-t-lg" />
+      <div className="w-full h-48 overflow-hidden">
+        <img
+          src={imageVehicle}
+          alt="Vehicle"
+          className="w-full h-full object-cover rounded-t-lg shadow-sm hover:opacity-90 transition-opacity"
+        />
+      </div>
       <div className="p-4 flex flex-col justify-between w-full">
         <div className="flex items-center mb-3">
           <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+            <span className="text-2xl text-gray-600">👤</span>
           </div>
           <div>
             <h3 className="text-h1 text-blue">{name}</h3>
-            <div className="flex items-center ">
+            <div className="flex items-center">
               <span className="text-sm text-gray-500">Calificación:</span>
               <div className="ml-1">{renderStars(rating)}</div>
             </div>
@@ -63,9 +69,9 @@ const TravelCard: React.FC<TravelCardProps> = ({
         <div className="flex mb-3 items-center">
           <div className="flex flex-col items-center justify-center mr-4">
             <p className="text-h1 font-bold text-blue">{date.split(" ")[0]}</p>
-            <p className="text-h1  text-blue">{date.split(" ")[1]}</p>
+            <p className="text-h1 text-blue">{date.split(" ")[1]}</p>
           </div>
-          <div className="flex flex-col justify-between ">
+          <div className="flex flex-col justify-between">
             <div className="flex items-center mb-1">
               <div className="w-3 h-3 border-2 rounded-full border-green mr-2"></div>
               <p className="text-blue text-p">{startLocation}</p>

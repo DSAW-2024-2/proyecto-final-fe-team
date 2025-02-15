@@ -1,3 +1,11 @@
+/* TripInfoPage.tsx
+Cambios realizados:
+1. Eliminada la lógica de manejo de reservas
+2. Eliminado el estado y funciones relacionadas con reservas
+3. Simplificada la interfaz Trip eliminando propiedades relacionadas con reservas
+4. Mantenida la estructura básica de visualización del viaje
+*/
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,7 +35,6 @@ interface Trip {
     affinity: string;
     description: string;
     status: string;
-    passengers: string[];
     availableSeats: number;
 }
 
@@ -40,7 +47,6 @@ const TripInfoPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Obtener userRole y decodificar el token para obtener userId
     const userRole = localStorage.getItem('userRole');
     const token = localStorage.getItem('token');
     const tokenPayload = token ? JSON.parse(atob(token.split('.')[1])) : null;
@@ -112,54 +118,33 @@ const TripInfoPage: React.FC = () => {
     };
 
     const handleUpdate = async () => {
-        if (!editedTrip || !trip) return;
-    
+        if (!editedTrip) return;
+
         try {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
             const token = localStorage.getItem('token');
-    
-            // Crear un objeto solo con los campos que han cambiado
-            const updates: Partial<Trip> = {};
-            
-            if (editedTrip.origin !== trip.origin) updates.origin = editedTrip.origin;
-            if (editedTrip.destination !== trip.destination) updates.destination = editedTrip.destination;
-            if (editedTrip.arrivalTime !== trip.arrivalTime) updates.arrivalTime = editedTrip.arrivalTime;
-            if (editedTrip.departureTime !== trip.departureTime) updates.departureTime = editedTrip.departureTime;
-            if (editedTrip.cost !== trip.cost) updates.cost = editedTrip.cost;
-            if (editedTrip.affinity !== trip.affinity) updates.affinity = editedTrip.affinity;
-            if (editedTrip.description !== trip.description) updates.description = editedTrip.description;
-    
-            // Si no hay cambios, solo cerramos el modo edición
-            if (Object.keys(updates).length === 0) {
-                setIsEditing(false);
-                return;
-            }
-    
+
             const response = await fetch(`${API_URL}/api/trips/${tripId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(updates)
+                body: JSON.stringify(editedTrip)
             });
-    
+
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al actualizar el viaje');
+                throw new Error('Error al actualizar el viaje');
             }
-    
-            // Actualizar el estado local con los cambios
-            setTrip({...trip, ...updates});
+
+            setTrip(editedTrip);
             setIsEditing(false);
-            
             Swal.fire({
                 title: '¡Éxito!',
                 text: 'El viaje ha sido actualizado correctamente',
                 icon: 'success'
             });
         } catch (error) {
-            console.error('Error updating trip:', error);
             Swal.fire({
                 title: 'Error',
                 text: error instanceof Error ? error.message : 'Error al actualizar el viaje',
@@ -212,43 +197,37 @@ const TripInfoPage: React.FC = () => {
         }
     };
 
-    const handleReserve = async () => {
-        try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-            const token = localStorage.getItem('token');
+    const handleReserve = async () => {    
+        console.log('Reserva pendiente de implementar');
 
-            // Crear una nueva reserva
-            const response = await fetch(`${API_URL}/api/trips/${tripId}/reserve`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId })
-            });
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const token = localStorage.getItem('token');
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al reservar el viaje');
+        const response = await fetch(`${API_URL}/api/reservations/${tripId}`, {
+            method: 'POST',
+            headers: {
+                'authorization': `Bearer ${token}`
             }
+        });
 
-            Swal.fire({
-                title: '¡Éxito!',
-                text: 'El viaje ha sido reservado correctamente',
-                icon: 'success'
-            });
-
-            // Actualizar el estado local con la nueva información del viaje
-            const data = await response.json();
-            setTrip(data.data);
-        } catch (error) {
-            console.error('Error reserving trip:', error);
+        if (!response.ok) {
+            const errorData = await response.json();
             Swal.fire({
                 title: 'Error',
-                text: error instanceof Error ? error.message : 'Error al reservar el viaje',
+                text: errorData.message || 'Error al reservar el viaje',
                 icon: 'error'
             });
+            return;
         }
+
+        Swal.fire({
+            title: '¡Reservado!',
+            text: 'Tu reserva ha sido realizada correctamente',
+            icon: 'success'
+        });
+
+        navigate('/home-passenger');
+
     };
 
     if (isLoading) {
@@ -276,7 +255,7 @@ const TripInfoPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 mt-2">
             <Header type={userRole === 'driver' ? 'Conductor' : 'Pasajero'} />
             
             <div className="max-w-2xl mx-auto p-6">
@@ -316,17 +295,6 @@ const TripInfoPage: React.FC = () => {
                                         </button>
                                     </>
                                 )}
-                            </div>
-                        )}
-
-                        {userRole === 'passenger' && (
-                            <div className="flex space-x-2">
-                                <button
-                                    onClick={handleReserve}
-                                    className="px-4 py-2 bg-blue text-white rounded-md hover:bg-blue-dark transition-colors"
-                                >
-                                    Reservar Viaje
-                                </button>
                             </div>
                         )}
                     </div>
@@ -466,6 +434,15 @@ const TripInfoPage: React.FC = () => {
                                 </>
                             )}
                         </div>
+
+                        {userRole === 'passenger' && trip.driverId !== userId && (
+                            <button
+                                onClick={handleReserve}
+                                className="w-full mt-4 px-4 py-2 bg-green text-white rounded-md hover:bg-blue transition-colors"
+                            >
+                                Reservar Viaje
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

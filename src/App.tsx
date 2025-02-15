@@ -18,6 +18,7 @@ import SuccessPage from './components/SuccessPage.tsx';
 import { isTokenValid } from './utils/auth.ts';
 import SearchTrip from './components/SearchTrip.tsx';
 import Ticket from './components/Ticket.tsx'
+import BookingPage from './components/BookingPage.tsx';
 
 
 const App: React.FC = () => {
@@ -41,12 +42,13 @@ const App: React.FC = () => {
             <Route path="/home" element={<HomePage />} />
             <Route path="/search-trip" element={<SearchTrip/>} />
             <Route path="/ticket" element={<Ticket/>} />
+            <Route path="/booking" element={<BookingPage/>} />
           </Route>
 
           {/* Rutas para conductores */}
+          <Route path="/register-car" element={<CarRegistrationPage />} />
           <Route element={<DriverRoute />}>
             <Route path="/home-driver" element={<HomePageDriver />} />
-            <Route path="/register-car" element={<CarRegistrationPage />} />
             <Route path="/register-trip" element={<TripRegistrationPage />} />
             <Route path="/vehicle-info" element={<VehicleInfoPage />} />
           </Route>

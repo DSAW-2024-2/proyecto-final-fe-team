@@ -57,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ type }) => {
         if (type === "Conductor") {
             navigate('/vehicle-info');
         } else if (type === "Pasajero") {
-            navigate('/reservations');
+            navigate('/booking');
         }
     };
 
@@ -69,11 +69,12 @@ const Header: React.FC<HeaderProps> = ({ type }) => {
         setIsMenuOpen(false);
     };
 
+
     return (
         <div className="w-full h-16 flex justify-between items-center px-5 mt-0 relative bg-white ">
             {/* Logo */}
             <img
-                src="/src/assets/Wheel.png"
+                src="Wheel.png"
                 alt="Logo"
                 className="object-cover w-14 h-14 hidden md:flex cursor-pointer transition-transform transform hover:scale-105"
                 onClick={handleHome}

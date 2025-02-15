@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import TravelCard from '../elements/TravelCard';
 import SmallTravelCard from '../elements/SmallTravelCard';
@@ -14,6 +15,7 @@ interface Trip {
     brand: string;
     model: string;
     availableSeats: number;
+    carImage: string;
   };
   tripDate: string;
   origin: string;
@@ -51,7 +53,6 @@ function HomePageDriver() {
         throw new Error('No hay sesión activa');
       }
 
-      // Decodificar el token para obtener el ID del usuario
       const tokenParts = token.split('.');
       const payload = JSON.parse(atob(tokenParts[1]));
       const currentUserId = payload.id;
@@ -74,17 +75,13 @@ function HomePageDriver() {
         throw new Error('Formato de datos inválido');
       }
 
-      // Filtrar solo los viajes del conductor actual usando el ID decodificado del token
       const userTrips = data.data.filter((trip: Trip) => trip.driverId === currentUserId);
-
-      // Ordenar viajes por fecha
       const sortedTrips = userTrips.sort((a: Trip, b: Trip) => {
         return new Date(a.tripDate).getTime() - new Date(b.tripDate).getTime();
       });
 
       setTrips(sortedTrips);
 
-      // Establecer el próximo viaje (el primero después de la fecha actual)
       const now = new Date();
       const nextTrip = sortedTrips.find((trip: Trip) => new Date(trip.tripDate) > now);
       setNextTrip(nextTrip || null);
@@ -117,10 +114,10 @@ function HomePageDriver() {
     <div className="min-h-screen flex flex-col md:flex-row md:mt-2 items-center flex-wrap gap-4">
       <Header type="Conductor" />
 
-      <div className='w-full md:hidden'>
-        <p className='text-h1 text-blue font-bold w-full md:pl-20'>Bienvenido {userName},</p>
-        <p className='text-h2 text-blue font-bold w-full md:pl-20'>Tu próximo viaje: </p>
-        <div className="flex w-full h-min md:justify-start">
+      <div className='w-full md:hidden px-4'>
+        <p className='text-h1 text-blue font-bold w-full'>Bienvenido {userName},</p>
+        <p className='text-h2 text-blue font-bold w-full'>Tu próximo viaje: </p>
+        <div className="flex w-full h-min justify-center md:justify-start">
           {nextTrip && (
             <SmallTravelCard
               name={nextTrip.driverName}
@@ -135,21 +132,21 @@ function HomePageDriver() {
         </div>
       </div>
 
-      <div className='md:flex w-full justify-between space-x-4 mx-20 hidden'>
+      <div className='md:flex w-full justify-between space-x-4 mx-4 md:mx-20 hidden'>
         <div className='flex justify-between w-3/5 bg-blue rounded-xl py-6 pr-11'>
           <div className='flex flex-col justify-end mb-4'>
-            <p className='text-h1 text-white font-bold w-full md:pl-20'>Bienvenido {userName},</p>
-            <p className='text-h2 text-white w-full md:pl-20'>¡Ten un lindo día!</p>
+            <p className='text-h1 text-white font-bold w-full pl-8 md:pl-20'>Bienvenido {userName},</p>
+            <p className='text-h2 text-white w-full pl-8 md:pl-20'>¡Ten un lindo día!</p>
           </div>
           <img
-            src="/src/assets/Logo-home.png"
+            src="Logo-home.png"
             alt="Background with circles"
             className="object-cover w-2/6 hidden md:flex"
           />
         </div>
 
         <div className='flex flex-col w-2/5 bg-green rounded-xl justify-center cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg'>
-          <p className='text-h2 text-blue font-bold w-full md:pl-20'>Tu próximo viaje: </p>
+          <p className='text-h2 text-blue font-bold w-full pl-8 md:pl-20'>Tu próximo viaje: </p>
           {nextTrip && (
             <SmallTravelCardText
               name={nextTrip.driverName}
@@ -165,38 +162,40 @@ function HomePageDriver() {
         </div>
       </div>
 
-      <p className='text-h2 text-blue font-bold w-full md:pl-20 mt-5'>
+      <p className='text-h2 text-blue font-bold w-full pl-4 md:pl-20 mt-5'>
         Todos tus viajes
       </p>
 
-      {trips.length === 0 ? (
-        <div className="text-center w-full">
-          <p className="text-gray-500 mb-4">No tienes viajes programados.</p>
-          <button 
-            onClick={() => window.location.href = '/register-trip'}
-            className="bg-green hover:bg-blue text-white font-bold py-2 px-4 rounded-full transition-colors"
-          >
-            Crear nuevo viaje
-          </button>
-        </div>
-      ) : (
-        trips.map((trip) => (
-          <TravelCard
-            key={trip.id}
-            id={trip.id}
-            name={trip.driverName}
-            rating={4} // Esto debería venir de la base de datos en una implementación futura
-            date={new Date(trip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
-            startLocation={trip.origin}
-            endLocation={trip.destination}
-            startTime={trip.departureTime}
-            endTime={trip.arrivalTime}
-            cost={trip.cost}
-            affinity={trip.affinity}
-            imageVehicle={trip.driverVehicle ? `/src/assets/cars/${trip.driverVehicle.brand.toLowerCase()}.jpg` : '/src/assets/default-car.jpg'}
-          />
-        ))
-      )}
+      <div className="w-full px-4 md:px-20 flex flex-wrap justify-center md:justify-start gap-4">
+        {trips.length === 0 ? (
+          <div className="text-center w-full">
+            <p className="text-gray-500 mb-4">No tienes viajes programados.</p>
+            <button 
+              onClick={() => window.location.href = '/register-trip'}
+              className="bg-green hover:bg-blue text-white font-bold py-2 px-4 rounded-full transition-colors"
+            >
+              Crear nuevo viaje
+            </button>
+          </div>
+        ) : (
+          trips.map((trip) => (
+            <TravelCard
+              key={trip.id}
+              id={trip.id}
+              name={trip.driverName}
+              rating={4}
+              date={new Date(trip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+              startLocation={trip.origin}
+              endLocation={trip.destination}
+              startTime={trip.departureTime}
+              endTime={trip.arrivalTime}
+              cost={trip.cost}
+              affinity={trip.affinity}
+              imageVehicle={trip.driverVehicle.carImage}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }

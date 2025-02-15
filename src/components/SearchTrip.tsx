@@ -29,7 +29,7 @@ const SearchTrip: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen">
+    <div className="flex flex-col items-center min-h-screen md:mt-2">
       <Header type="Pasajero" />
       <div className="flex flex-col p-6 w-full justify-center items-center">
         {/* Header Content */}
