@@ -15,6 +15,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={redirectPath} replace />;
   }
 
+  if (onclick && !isAuthenticated) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
   return <Outlet />;
 };
 

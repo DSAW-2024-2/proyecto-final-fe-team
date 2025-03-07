@@ -139,7 +139,7 @@ function HomePageDriver() {
             <p className='text-h2 text-white w-full pl-8 md:pl-20'>¡Ten un lindo día!</p>
           </div>
           <img
-            src="Logo-home.png"
+            src="/Logo-home.png"
             alt="Background with circles"
             className="object-cover w-2/6 hidden md:flex"
           />

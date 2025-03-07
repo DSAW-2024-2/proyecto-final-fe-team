@@ -165,23 +165,36 @@ function HomePage() {
         {trips.length === 0 ? (
           <p className="text-gray-500 text-center w-full">No hay viajes disponibles en este momento.</p>
         ) : (
-          trips.map((trip) => (
-            <TravelCard
-              key={trip.id}
-              id={trip.id}
-              name={trip.driverName}
-              rating={4}
-              date={new Date(trip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
-              startLocation={trip.origin}
-              endLocation={trip.destination}
-              startTime={trip.departureTime}
-              endTime={trip.arrivalTime}
-              cost={trip.cost}
-              affinity={trip.affinity}
-              imageVehicle={trip.driverVehicle.carImage}
-            />
-          ))
-        )}
+          trips
+    .filter(trip => {
+      // Obtener solo la fecha (sin la hora) para comparar correctamente
+      const tripDate = new Date(trip.tripDate);
+      tripDate.setHours(0, 0, 0, 0);
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      return tripDate >= today;
+    })
+    .map((trip) => (
+      <TravelCard
+        key={trip.id}
+        id={trip.id}
+        name={trip.driverName}
+        rating={4}
+        date={new Date(trip.tripDate).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+        startLocation={trip.origin}
+        endLocation={trip.destination}
+        startTime={trip.departureTime}
+        endTime={trip.arrivalTime}
+        cost={trip.cost}
+        affinity={trip.affinity}
+        imageVehicle={trip.driverVehicle && trip.driverVehicle.carImage 
+          ? trip.driverVehicle.carImage 
+          : '/default-car.jpg'}
+      />
+    ))
+)}
       </div>
     </div>
   );
