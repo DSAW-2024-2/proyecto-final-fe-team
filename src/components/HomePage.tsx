@@ -189,9 +189,7 @@ function HomePage() {
         endTime={trip.arrivalTime}
         cost={trip.cost}
         affinity={trip.affinity}
-        imageVehicle={trip.driverVehicle && trip.driverVehicle.carImage 
-          ? trip.driverVehicle.carImage 
-          : '/default-car.jpg'}
+        imageVehicle={trip.driverVehicle && trip.driverVehicle.carImage ? trip.driverVehicle.carImage : ''}
       />
     ))
 )}

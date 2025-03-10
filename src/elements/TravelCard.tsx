@@ -1,4 +1,5 @@
-import React from 'react';
+// TravelCard.tsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface TravelCardProps {
@@ -29,6 +30,7 @@ const TravelCard: React.FC<TravelCardProps> = ({
   imageVehicle,
 }) => {
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
@@ -44,14 +46,42 @@ const TravelCard: React.FC<TravelCardProps> = ({
     navigate(`/trip/${id}`);
   };
 
+  // Verificar si imageVehicle es una cadena base64 válida
+  const isValidBase64 = () => {
+    return typeof imageVehicle === 'string' && 
+           (imageVehicle.startsWith('data:image') || 
+            /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/.test(imageVehicle));
+  };
+
+  // Asegurarse de que la cadena base64 tenga el prefijo correcto
+  const getImageSrc = () => {
+    if (!imageVehicle) return '';
+    
+    if (imageVehicle.startsWith('data:image')) {
+      return imageVehicle;
+    } else if (isValidBase64()) {
+      return `data:image/jpeg;base64,${imageVehicle}`;
+    } else {
+      // Fallback para rutas de imagen regulares
+      return imageVehicle;
+    }
+  };
+
   return (
     <div className="flex flex-col bg-white shadow-md rounded-lg overflow-hidden w-80 mx-auto mt-3 border border-gray-200 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg">
-      <div className="w-full h-48 overflow-hidden">
-        <img
-          src={imageVehicle}
-          alt="Vehicle"
-          className="w-full h-full object-cover rounded-t-lg shadow-sm hover:opacity-90 transition-opacity"
-        />
+      <div className="w-full h-48 overflow-hidden bg-gray-200">
+        {!imageError && imageVehicle ? (
+          <img
+            src={getImageSrc()}
+            alt="Vehicle"
+            className="w-full h-full object-cover rounded-t-lg shadow-sm hover:opacity-90 transition-opacity"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+            <span className="text-4xl text-gray-400">🚗</span>
+          </div>
+        )}
       </div>
       <div className="p-4 flex flex-col justify-between w-full">
         <div className="flex items-center mb-3">
